@@ -1,0 +1,7 @@
+company:
+  json:
+    filepath: "src/main/resources/companies.json"
+    outputFilepath: "src/main/resources/"
+
+server:
+  port: 8080
