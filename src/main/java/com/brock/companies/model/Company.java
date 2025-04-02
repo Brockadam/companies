@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,7 +26,7 @@ public class Company {
     private String url;
 
     @JsonProperty("year_founded")
-    private int yearFounded;
+    private Integer yearFounded;  // Using Integer instead of int to handle null values
 
     @JsonProperty("city")
     private String city;
@@ -36,10 +38,10 @@ public class Company {
     private String country;
 
     @JsonProperty("zip_code")
-    private String zipCode;
+    private Object zipCode;  // Using Object to handle both numeric and string values
 
     @JsonProperty("full_time_employees")
-    private String fullTimeEmployees;
+    private String fullTimeEmployees;  // "10-Jan" is a string in your data, not a number range
 
     @JsonProperty("company_type")
     private String companyType;
@@ -63,7 +65,7 @@ public class Company {
     private String descriptionShort;
 
     @JsonProperty("source_count")
-    private String sourceCount;
+    private String sourceCount;  // "NA" is a string, not a number
 
     @JsonProperty("data_types")
     private String dataTypes;
@@ -71,8 +73,8 @@ public class Company {
     @JsonProperty("example_uses")
     private String exampleUses;
 
-//    @JsonProperty("data_impacts") This is commented out because I don't think the data is correct in the json file.
-//    private String dataImpacts;
+    @JsonProperty("data_impacts")
+    private List<String> dataImpacts = new ArrayList<>();  // Initialize to prevent NPE
 
     @JsonProperty("financial_info")
     private String financialInfo;
@@ -80,4 +82,11 @@ public class Company {
     @JsonProperty("last_updated")
     private String lastUpdated;
 
+    // Add getter that handles null dataImpacts
+    public List<String> getDataImpacts() {
+        if (dataImpacts == null) {
+            return new ArrayList<>();
+        }
+        return dataImpacts;
+    }
 }

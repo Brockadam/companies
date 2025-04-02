@@ -18,6 +18,7 @@
   "source_count" : "5",
   "data_types" : "Financial",
   "example_uses" : "Financial analysis",
+  "data_impacts" : [ ],
   "financial_info" : "Revenue: $1B",
   "last_updated" : "2024-04-01"
 }, {
@@ -40,6 +41,7 @@
   "source_count" : "3",
   "data_types" : "Customer Data",
   "example_uses" : "Retail analytics",
+  "data_impacts" : [ ],
   "financial_info" : "Revenue: $500M",
   "last_updated" : "2024-04-01"
 } ]

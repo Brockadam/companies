@@ -6,8 +6,10 @@ import com.brock.companies.exception.UpdateException;
 import com.brock.companies.model.Company;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  * Service class for managing company data.
  */
 @Service
+@Slf4j
 public class CompanyService {
 
     List<Company> companies;
@@ -38,11 +41,23 @@ public class CompanyService {
      * This method is called automatically after the service is constructed.
      */
     @PostConstruct
-    public void loadCompanies() throws IOException {
+    public void loadCompanies() {
         try {
-            companies = mapper.readValue(Paths.get(jsonFilePath).toFile(), new TypeReference<List<Company>>() {
-            });
+            // Configure ObjectMapper to be more lenient
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+            mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+            mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+
+            log.info("Loading company data from: {}", jsonFilePath);
+
+            // Read the data
+            companies = mapper.readValue(Paths.get(jsonFilePath).toFile(),
+                    new TypeReference<List<Company>>() {});
+
+            log.info("Successfully loaded {} companies", companies.size());
         } catch (IOException e) {
+            log.error("Failed to load company data: {}", e.getMessage(), e);
             throw new DataLoadException("Failed to load company data from JSON file.", e);
         }
     }
@@ -83,7 +98,7 @@ public class CompanyService {
                             field.setAccessible(true);
                             field.set(company, value);
                         } catch (NoSuchFieldException | IllegalAccessException e) {
-                            e.printStackTrace();
+                            log.error(e.toString());
                         }
                     });
                     saveUpdatedCompanies();
